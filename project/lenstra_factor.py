@@ -7,6 +7,8 @@ Created on Thu Nov  4 11:23:27 2021
 """
 
 import math
+import argparse
+from time import time
 from sympy import isprime
 from random import randrange
 
@@ -166,16 +168,19 @@ def ecm(my_number, bound, max_curves = 10):
             return my_factor
     return my_number
 
-def main(my_number):
+def main(my_number, bound_param):
     #my_number = int(input("Please input the number to be factorized : "))
     print(f"Number to factorize : {my_number}")
     for prime in primes:
         while my_number % prime == 0:
-            print(f"\t{prime} is a factor of {my_number}")
+            if my_number == prime:
+                print("\t{} is prime".format(my_number))
+            else:
+                print(f"\t{prime} is a factor of {my_number}")
             my_number //= prime
             print(f"Number to factorize {my_number}")
     
-    bound = int(math.factorial(10000)) # bound should be less than the number to be factorized
+    bound = int(math.factorial(bound_param)) # bound should be less than the number to be factorized
     while my_number != 1:
         if isprime(my_number):
             print(f"\t{my_number} is prime")
@@ -185,4 +190,15 @@ def main(my_number):
         print(f"\t{prime} is a factor of {my_number}")
         my_number = int(my_number // my_factor)
         print(f"Number to factorize {my_number}")
-        
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(prog="lenstra_factor")
+    parser.add_argument("prime1")
+    parser.add_argument("prime2")
+    parser.add_argument("bound_param")
+    args = parser.parse_args()
+    start_time = time()
+    my_number = int(args.prime1) * int(args.prime2)
+    main(my_number, int(args.bound_param))
+    end_time = time()
+    print("Time to factor {} : {} s".format(my_number, end_time - start_time))
